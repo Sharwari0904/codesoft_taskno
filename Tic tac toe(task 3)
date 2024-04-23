@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// Function to print the tic-tac-toe board
+void printBoard(const vector<vector<char>>& board) {
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            cout << board[i][j];
+            if (j < 2)
+                cout << " | ";
+        }
+        cout << endl;
+        if (i < 2)
+            cout << "---------" << endl;
+    }
+}
+
+// Function to check if the current state of the board is a win for the given player
+bool checkWin(const vector<vector<char>>& board, char player) {
+    // Check rows and columns
+    for (int i = 0; i < 3; ++i) {
+        if ((board[i][0] == player && board[i][1] == player && board[i][2] == player) ||
+            (board[0][i] == player && board[1][i] == player && board[2][i] == player)) {
+            return true;
+        }
+    }
+    // Check diagonals
+    if ((board[0][0] == player && board[1][1] == player && board[2][2] == player) ||
+        (board[0][2] == player && board[1][1] == player && board[2][0] == player)) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    vector<vector<char>> board(3, vector<char>(3, ' ')); // Initialize an empty 3x3 board
+
+    bool player1Turn = true; // Player 1 starts the game
+    int movesLeft = 9; // Number of moves left before a draw
+
+    while (movesLeft > 0) {
+        // Print the current state of the board
+        cout << "Current board:" << endl;
+        printBoard(board);
+
+        // Determine the current player
+        char currentPlayerSymbol = player1Turn ? 'X' : 'O';
+        cout << "Player " << (player1Turn ? "1" : "2") << " (" << currentPlayerSymbol << ") turn. Enter row (0-2) and column (0-2) separated by a space: ";
+        
+        int row, col;
+        cin >> row >> col;
+
+        // Check if the chosen cell is valid and empty
+        if (row >= 0 && row < 3 && col >= 0 && col < 3 && board[row][col] == ' ') {
+            // Update the board with the current player's symbol
+            board[row][col] = currentPlayerSymbol;
+
+            // Check if the current player wins
+            if (checkWin(board, currentPlayerSymbol)) {
+                cout << "Player " << (player1Turn ? "1" : "2") << " wins!" << endl;
+                printBoard(board);
+                return 0;
+            }
+
+            // Switch turns and decrement movesLeft
+            player1Turn = !player1Turn;
+            --movesLeft;
+        } else {
+            cout << "Invalid move! Please try again." << endl;
+        }
+    }
+
+    // If no player wins after all moves, it's a draw
+    cout << "It's a draw!" << endl;
+    printBoard(board);
+
+    return 0;
+}
